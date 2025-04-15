@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./button"; // Asume que './button' es la ruta correcta en tu proyecto Next
 import { Share2, Heart } from "lucide-react";
 import { toast } from "sonner"; // Asume que Sonner está configurado globalmente (p. ej., en layout.tsx)
+import Image from "next/image";
 
 // La interfaz Haiku se mantiene igual
 interface Haiku {
@@ -159,10 +160,12 @@ const HaikuDisplay: React.FC = () => {
         <div className="px-4">
           <div className="relative w-full rounded-2xl overflow-hidden shadow-lg">
              {/* Usar next/image si quieres optimización de imágenes */}
-            <img
+            <Image
               src={data.image_url}
               alt={data.title || `Haiku by ${data.author}`} // Alt text descriptivo
               className="w-full h-auto rounded-2xl object-contain"
+              width={50}
+              height={50}
               // Podrías añadir width/height si los conoces para evitar layout shift
             />
           </div>
@@ -233,10 +236,12 @@ const HaikuDisplay: React.FC = () => {
         <div className="w-2/5 flex flex-col items-center justify-center">
           <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg">
              {/* Usar next/image si quieres optimización de imágenes */}
-            <img
+            <Image
               src={data.image_url}
               alt={data.title || `Haiku by ${data.author}`} // Alt text descriptivo
               className="w-full h-full object-cover rounded-2xl"
+              width={50}
+              height={50}
             />
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-transparent to-black/10 pointer-events-none" aria-hidden="true"/>
           </div>
