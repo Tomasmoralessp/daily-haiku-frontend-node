@@ -2,19 +2,6 @@ import { notFound } from 'next/navigation'
 import Header from '@/components/layout/Header'
 import HaikuDate from '@/components/ui/HaikuDate'
 
-interface Haiku {
-  id: number;
-  haiku: string;
-  author: string;
-  season: string;
-  title?: string | null;
-  notes?: string | null;
-  source?: string;
-  keywords?: string | string[] | null;
-  image_url: string;
-  date: string;
-}
-
 export default async function Page({ params }: { params: { date: string } }) {
   const { date } = params
 
@@ -24,7 +11,7 @@ export default async function Page({ params }: { params: { date: string } }) {
 
   if (!res.ok) notFound()
 
-  const haiku: Haiku = await res.json()
+  const haiku = await res.json()
 
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">

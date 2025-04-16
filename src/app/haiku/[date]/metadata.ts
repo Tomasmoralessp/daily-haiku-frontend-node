@@ -9,17 +9,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/haiku/${date}`, {
-      cache: 'force-cache',
+      next: { revalidate: 60 },
     })
 
     if (!res.ok) throw new Error('No se pudo obtener el haiku')
 
     const haiku = await res.json()
-
     const fallbackImage = 'https://dailyhaiku.vercel.app/banner/banner.png'
-    const imageUrl = haiku?.image_url?.startsWith('http')
-      ? haiku.image_url
-      : fallbackImage
+    const imageUrl = haiku?.image_url?.startsWith('http') ? haiku.image_url : fallbackImage
 
     return {
       title: haiku?.title || `Haiku for ${date} | Daily Haiku`,
@@ -27,14 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       openGraph: {
         title: `Haiku for ${date}`,
         description: haiku?.haiku || '',
-        images: [
-          {
-            url: imageUrl,
-            width: 1200,
-            height: 630,
-            alt: `Haiku ${date}`,
-          },
-        ],
+        images: [{ url: imageUrl, width: 1200, height: 630, alt: `Haiku ${date}` }],
         type: 'article',
         url: `https://dailyhaiku.vercel.app/haiku/${date}`,
       },
