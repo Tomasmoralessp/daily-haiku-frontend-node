@@ -1,26 +1,42 @@
-import React from 'react';
-import Header from "../../../components/layout/Header";
-import HaikuDate from "../../../components/ui/HaikuDate";
-import { useParams, notFound } from 'next/navigation';
+import { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 
-const HaikuDatePage: React.FC = () => {
-  const { date } = useParams();
+const ClientHaikuPage = dynamic(() => import('./ClientHaikuPage'), { ssr: false })
 
-  // Validación de la fecha
-  if (!date || typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    notFound();
-    return null; // Añadido para satisfacer el tipo de retorno de Next.js
+export async function generateMetadata({ params }: { params: { date: string } }): Promise<Metadata> {
+  const { date } = params
+  const prettyDate = new Date(date).toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+
+  return {
+    title: `${prettyDate} | Daily Haiku`,
+    description: `Haiku publicado el ${prettyDate}. Descubre un nuevo poema cada día.`,
+    openGraph: {
+      title: `Haiku para el ${prettyDate} | Daily Haiku`,
+      description: `Descubre el haiku diario, poesía atemporal de Bashō y más allá.`,
+      url: `https://dailyhaiku.vercel.app/haiku/${date}`,
+      images: [
+        {
+          url: `https://dailyhaiku.vercel.app/banner/haiku_${date}.png`,
+          width: 1200,
+          height: 630,
+          alt: `Haiku del ${prettyDate}`,
+        },
+      ],
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Haiku para el ${prettyDate}`,
+      description: 'Descubre poesía japonesa todos los días.',
+      images: [`https://dailyhaiku.vercel.app/banner/haiku_${date}.png`],
+    },
   }
-
-  return (
-    <div className="min-h-screen flex flex-col bg-black text-white">
-      <Header />
-      <main className="flex-1 flex flex-col pt-10 px-4 sm:px-6 lg:px-8">
-        <div className="flex-1 flex items-center justify-center">
-          <HaikuDate date={date} />
-        </div>
-      </main>
-    </div>
-  );
 }
-export default HaikuDatePage;
+
+export default function Page() {
+  return <ClientHaikuPage />
+}
