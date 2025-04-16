@@ -11,43 +11,45 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/haiku/${date}`, {
       cache: 'force-cache',
     })
-    
 
     if (!res.ok) throw new Error('No se pudo obtener el haiku')
 
     const haiku = await res.json()
 
+    const fallbackImage = 'https://dailyhaiku.vercel.app/banner/banner.png'
+    const imageUrl = haiku?.image_url?.startsWith('http')
+      ? haiku.image_url
+      : fallbackImage
+
     return {
-      title: `${date} | Daily Haiku`,
-      description: haiku.haiku
-        ? haiku.haiku.slice(0, 140)
-        : `Haiku publicado el ${date}. Descubre un nuevo poema cada día.`,
+      title: haiku?.title || `Haiku for ${date} | Daily Haiku`,
+      description: haiku?.haiku?.slice(0, 140) || `Discover a haiku for ${date}`,
       openGraph: {
-        title: `Haiku del ${date}`,
-        description: haiku.haiku || 'Descubre poesía japonesa todos los días.',
-        url: `https://dailyhaiku.vercel.app/haiku/${date}`,
+        title: `Haiku for ${date}`,
+        description: haiku?.haiku || '',
         images: [
           {
-            url: haiku.image_url || `https://dailyhaiku.vercel.app/haiku_${date}.png`,
+            url: imageUrl,
             width: 1200,
             height: 630,
-            alt: `Haiku del ${date}`,
+            alt: `Haiku ${date}`,
           },
         ],
         type: 'article',
+        url: `https://dailyhaiku.vercel.app/haiku/${date}`,
       },
       twitter: {
         card: 'summary_large_image',
-        title: `Haiku para el ${date}`,
-        description: haiku.haiku || 'Descubre poesía japonesa todos los días.',
-        images: [haiku.image_url || `https://dailyhaiku.vercel.app/banner/haiku_${date}.png`],
+        title: `Haiku for ${date}`,
+        description: haiku?.haiku || '',
+        images: [imageUrl],
       },
     }
   } catch (err) {
-    console.error('Error generando metadata:', err)
+    console.error('Metadata generation failed:', err)
     return {
       title: `${date} | Daily Haiku`,
-      description: `Haiku del ${date}.`,
+      description: `Haiku publicado el ${date}.`,
     }
   }
 }
