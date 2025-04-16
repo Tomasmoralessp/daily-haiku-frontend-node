@@ -8,17 +8,9 @@ export async function GET() {
       next: { revalidate: 3600 },
     })
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch haiku history: ${res.status}`)
-    }
+    const data: { date: string }[] = await res.ok ? await res.json() : []
 
-    const data: { date: string }[] = await res.json()
-
-    // 🔒 Seguridad de memoria: limitar a los últimos 100 haikus como máximo
-    const safeLimit = 100
-    const safeData = data.slice(0, safeLimit)
-
-    const urls = safeData.map((item) => {
+    const urls = data.map((item) => {
       return `
         <url>
           <loc>${baseUrl}/haiku/${item.date}</loc>
@@ -29,6 +21,12 @@ export async function GET() {
     const xml = `
       <?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        <url>
+          <loc>${baseUrl}/</loc>
+        </url>
+        <url>
+          <loc>${baseUrl}/history</loc>
+        </url>
         ${urls.join('\n')}
       </urlset>
     `.trim()
@@ -38,9 +36,8 @@ export async function GET() {
         'Content-Type': 'application/xml',
       },
     })
-
-  } catch (error) {
-    console.error('Error generating sitemap:', error)
+  } catch (err) {
+    console.error('Error generating sitemap:', err)
     return new Response('Internal Server Error', { status: 500 })
   }
 }
