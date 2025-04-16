@@ -1,4 +1,3 @@
-// Asegúrate de que la ruta sea algo como: src/components/HaikuDisplay.tsx
 "use client"; // ¡Importante! Este componente necesita ser Cliente.
 
 import React, { useEffect, useState } from "react";
@@ -80,16 +79,16 @@ const HaikuDisplay: React.FC = () => {
           }
         });
     } else if (navigator.clipboard) {
-       // Fallback a copiar al portapapeles si navigator.share no está disponible
+      // Fallback a copiar al portapapeles si navigator.share no está disponible
       navigator.clipboard.writeText(`${message} ${shareUrl}`)
         .then(() => toast.success("Link copied to clipboard!"))
         .catch(err => {
-           console.error("Error copying to clipboard:", err);
-           toast.error("Could not copy link to clipboard.");
+          console.error("Error copying to clipboard:", err);
+          toast.error("Could not copy link to clipboard.");
         });
     } else {
-        // Si ninguna opción está disponible (muy raro)
-        toast.error("Sharing is not supported on this browser.");
+      // Si ninguna opción está disponible (muy raro)
+      toast.error("Sharing is not supported on this browser.");
     }
   };
 
@@ -98,6 +97,24 @@ const HaikuDisplay: React.FC = () => {
     setTimeout(() => setIsHeartAnimating(false), 1000); // Duración de la animación
     // Abrir enlace en nueva pestaña
     window.open("https://buymeacoffee.com/tomasmorales", "_blank", "noopener,noreferrer");
+  };
+
+  // --- Componente de Imagen Reutilizable ---
+  const HaikuImage: React.FC<{ src: string; alt: string; borderRadius?: string }> = ({ src, alt, borderRadius = '0.75rem' }) => {
+    return (
+      <div
+        className="relative w-full aspect-square overflow-hidden"
+        style={{ borderRadius }} // Aplicar el borderRadius aquí
+      >
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover"
+          style={{ borderRadius }} // Y también aquí, por si acaso
+        />
+      </div>
+    );
   };
 
   // --- Renderizado condicional (se mantiene igual) ---
@@ -134,14 +151,14 @@ const HaikuDisplay: React.FC = () => {
       // o simplemente un string "tag1,tag2"
       const parsed = JSON.parse(data.keywords);
       if (Array.isArray(parsed)) {
-         keywordsArray = parsed;
+        keywordsArray = parsed;
       }
     } catch (error) {
-       // Si falla el parseo JSON, quizás es una lista separada por comas
-       keywordsArray = data.keywords.split(',').map(k => k.trim()).filter(k => k);
-       if(keywordsArray.length === 0 && data.keywords.trim()){ // Si split falla pero hay texto
-           keywordsArray = [data.keywords.trim()]; // Trátalo como una sola keyword
-       }
+      // Si falla el parseo JSON, quizás es una lista separada por comas
+      keywordsArray = data.keywords.split(',').map(k => k.trim()).filter(k => k);
+      if (keywordsArray.length === 0 && data.keywords.trim()) { // Si split falla pero hay texto
+        keywordsArray = [data.keywords.trim()]; // Trátalo como una sola keyword
+      }
       console.warn("Keywords no son un JSON array válido, intentando split por coma:", error);
     }
   } else if (Array.isArray(data.keywords)) {
@@ -158,20 +175,12 @@ const HaikuDisplay: React.FC = () => {
       <div className="md:hidden flex flex-col space-y-6">
         {/* Haiku Image */}
         <div className="px-4">
-          <div className="relative w-full rounded-2xl overflow-hidden shadow-lg">
-             {/* Usar next/image si quieres optimización de imágenes */}
-            <Image
-              src={data.image_url}
-              alt={data.title || `Haiku by ${data.author}`} // Alt text descriptivo
-              className="w-full h-auto rounded-2xl object-contain"
-              width={50}
-              height={50}
-              // Podrías añadir width/height si los conoces para evitar layout shift
-            />
-          </div>
+          <HaikuImage
+            src={data.image_url}
+            alt={data.title || `Haiku by ${data.author}`}
+            borderRadius="1rem"
+          />
         </div>
-
-        {/* Haiku Text */}
         <div className="text-center px-4">
           {/* Usar dangerouslySetInnerHTML es arriesgado si 'haiku' viene de usuario */}
           {/* Mejor asegurarse que el backend sanitiza o renderizar como texto */}
@@ -199,7 +208,8 @@ const HaikuDisplay: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={handleShare}
-              className="border-gray-700 hover:bg-gray-800 bg-transparent cursor-pointer "
+              className="border-gray-700 hover:bg-gray-800 bg-transparent cursor-pointer"
+              style={{ borderRadius: '0.5rem' }}
               aria-label="Share this haiku"
             >
               <Share2 className="mr-1 h-4 w-4" />
@@ -210,9 +220,8 @@ const HaikuDisplay: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={handleSupportClick}
-              className={`relative overflow-hidden border-gray-700 hover:border-red-500 cursor-pointer  hover:text-red-500 transition-colors duration-300 ${
-                isHeartAnimating ? "border-red-500 text-red-500 " : ""
-              }`}
+              className={`relative overflow-hidden border-gray-700 hover:border-red-500 cursor-pointer  hover:text-red-500 transition-colors duration-300`}
+              style={{ borderRadius: '0.5rem' }}
               aria-label="Support the author"
             >
               <Heart
@@ -223,7 +232,7 @@ const HaikuDisplay: React.FC = () => {
               />
               Support
               {isHeartAnimating && (
-                <span className="absolute inset-0 bg-red-500/10 animate-pulse -z-10" aria-hidden="true"/>
+                <span className="absolute inset-0 bg-red-500/10 animate-pulse -z-10" aria-hidden="true" />
               )}
             </Button>
           </div>
@@ -231,20 +240,14 @@ const HaikuDisplay: React.FC = () => {
       </div>
 
       {/* Desktop layout */}
-      <div className="hidden md:flex md:flex-row items-center justify-center w-full gap-12 lg:gap-16 px-4">
-         {/* Image */}
+      <div className="hidden md:flex flex-row items-center justify-center w-full gap-12 lg:gap-16 px-4">
+        {/* Image */}
         <div className="w-2/5 flex flex-col items-center justify-center">
-          <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg">
-             {/* Usar next/image si quieres optimización de imágenes */}
-            <Image
-              src={data.image_url}
-              alt={data.title || `Haiku by ${data.author}`} // Alt text descriptivo
-              className="w-full h-full object-cover rounded-2xl"
-              width={50}
-              height={50}
-            />
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-transparent to-black/10 pointer-events-none" aria-hidden="true"/>
-          </div>
+          <HaikuImage
+            src={data.image_url}
+            alt={data.title || `Haiku by ${data.author}`}
+            borderRadius="1rem"
+          />
         </div>
 
         {/* Texto y metadatos */}
@@ -274,11 +277,12 @@ const HaikuDisplay: React.FC = () => {
 
             {/* Botones */}
             <div className="flex gap-3">
-               <Button
+              <Button
                 variant="outline"
                 size="sm"
                 onClick={handleShare}
                 className="border-gray-700 hover:bg-gray-800"
+                style={{ borderRadius: '0.5rem' }}
                 aria-label="Share this haiku"
               >
                 <Share2 className="mr-1 h-4 w-4" />
@@ -289,20 +293,19 @@ const HaikuDisplay: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleSupportClick}
-                className={`relative overflow-hidden border-gray-700 hover:border-red-500 hover:text-red-500 transition-colors duration-300 ${
-                  isHeartAnimating ? "border-red-500 text-red-500" : ""
-                }`}
+                className={`relative overflow-hidden border-gray-700 hover:border-red-500 hover:text-red-500 transition-colors duration-300`}
+                style={{ borderRadius: '0.5rem' }}
                 aria-label="Support the author"
               >
                 <Heart
                   className={`mr-1 h-4 w-4 transition-transform duration-500 ${
                     isHeartAnimating ? "scale-150 text-red-500" : ""
                   }`}
-                 // aria-hidden="true"
+                  // aria-hidden="true"
                 />
                 Support
                 {isHeartAnimating && (
-                  <span className="absolute inset-0 bg-red-500/10 animate-pulse -z-10" aria-hidden="true"/>
+                  <span className="absolute inset-0 bg-red-500/10 animate-pulse -z-10" aria-hidden="true" />
                 )}
               </Button>
             </div>
@@ -314,49 +317,3 @@ const HaikuDisplay: React.FC = () => {
 };
 
 export default HaikuDisplay;
-
-
-// --- Consideración Adicional: Data Fetching en Next.js ---
-//
-// Este componente actualmente carga los datos en el cliente usando useEffect.
-// En Next.js, a menudo es preferible cargar los datos iniciales en el servidor
-// dentro del componente Page (ej: src/app/page.tsx o src/app/haiku/[date]/page.tsx).
-//
-// Si hicieras eso:
-// 1. La función Page sería `async` y haría el `Workspace` directamente (sin `useEffect`).
-//    Usaría `process.env.API_URL` (sin NEXT_PUBLIC_).
-// 2. Pasarías los `data` (o `error`) como props a `<HaikuDisplay data={data} />`.
-// 3. Este componente `HaikuDisplay` seguiría necesitando `"use client";` por los botones
-//    y la animación, pero podrías quitar el `useEffect` del fetch, y los estados
-//    `loading`, `error` y `data`, recibiéndolos como props.
-//
-// Ejemplo de cómo se vería la página contenedora (simplificado):
-/*
-   // En src/app/page.tsx (o similar)
-   async function getDailyHaiku() {
-     const apiUrl = process.env.API_URL; // Variable de servidor
-     if (!apiUrl) throw new Error("API URL not configured");
-     const res = await fetch(`${apiUrl}/daily_haiku`, { cache: 'no-store' }); // O configurar revalidación
-     if (!res.ok) throw new Error("Failed to fetch haiku");
-     return res.json();
-   }
-
-   export default async function HomePage() {
-     try {
-       const haikuData = await getDailyHaiku();
-       return <HaikuDisplay initialData={haikuData} />; // Pasa datos como prop
-     } catch (error) {
-       // Manejar error de carga inicial aquí
-       return <div>Error cargando haiku: {error.message}</div>;
-     }
-   }
-
-   // Y en HaikuDisplay:
-   // const HaikuDisplay: React.FC<{ initialData: Haiku | null }> = ({ initialData }) => {
-   //   const [data, setData] = useState(initialData); // Usar prop para estado inicial
-   //   // ... quitar useEffect fetch, loading, error states ...
-   //   // ... el resto de la lógica (botones, animación) se mantiene ...
-   // }
-*/
-// Este enfoque mejora el rendimiento inicial y SEO, pero requiere reestructurar un poco.
-// La versión actual con useEffect funcionará, pero es menos "idiomática" de Next.js App Router.
