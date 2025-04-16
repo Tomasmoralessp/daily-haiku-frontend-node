@@ -9,8 +9,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/haiku/${date}`, {
-      next: { revalidate: 60 },
+      cache: 'force-cache',
     })
+    
 
     if (!res.ok) throw new Error('No se pudo obtener el haiku')
 

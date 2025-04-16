@@ -10,7 +10,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const haiku = await res.ok ? await res.json() : null;
   const date = haiku?.date || new Date().toISOString().split('T')[0];
 
-  // ⚠️ Cambia esta URL si tu bucket o dominio es distinto
   const fallbackImage = 'https://dailyhaiku.vercel.app/banner/banner.png';
   const imageUrl = haiku?.image_url?.startsWith('http')
     ? haiku.image_url
