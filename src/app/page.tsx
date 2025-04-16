@@ -1,19 +1,29 @@
-import Header from "../components/layout/Header";
-import HaikuDisplay from "../components/ui/HaikuDisplay";
+import Header from "../components/layout/Header"
+import HaikuDisplay from "../components/ui/HaikuDisplay"
 import { Metadata } from 'next'
+
+interface Haiku {
+  id: number
+  haiku: string
+  author: string
+  season: string
+  title?: string | null
+  notes?: string | null
+  source?: string
+  keywords?: string | string[] | null
+  image_url: string
+  date: string
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/daily_haiku`, {
-    next: { revalidate: 60 },
-  });
+    cache: 'force-cache',
+  })
 
-  const haiku = await res.ok ? await res.json() : null;
-  const date = haiku?.date || new Date().toISOString().split('T')[0];
-
-  const fallbackImage = 'https://dailyhaiku.vercel.app/banner/banner.png';
-  const imageUrl = haiku?.image_url?.startsWith('http')
-    ? haiku.image_url
-    : fallbackImage;
+  const haiku = await res.ok ? await res.json() : null
+  const date = haiku?.date || new Date().toISOString().split('T')[0]
+  const fallbackImage = 'https://dailyhaiku.vercel.app/banner/banner.png'
+  const imageUrl = haiku?.image_url?.startsWith('http') ? haiku.image_url : fallbackImage
 
   return {
     title: `Haiku for ${date} | Daily Haiku`,
@@ -21,14 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Haiku for ${date}`,
       description: haiku?.haiku || '',
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: `Haiku for ${date}`,
-        },
-      ],
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: `Haiku for ${date}` }],
       url: `https://dailyhaiku.vercel.app/`,
       type: 'article',
     },
@@ -38,20 +41,32 @@ export async function generateMetadata(): Promise<Metadata> {
       description: haiku?.haiku || '',
       images: [imageUrl],
     },
-  };
+  }
 }
 
-const Index: React.FC = () => {
+export default async function Index() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/daily_haiku`, {
+    cache: 'force-cache',
+  })
+
+  if (!res.ok) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white bg-black">
+          <p className="text-xl">Error loading today&apos;s haiku</p>
+      </div>
+    )
+  }
+
+  const haiku: Haiku = await res.json()
+
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">
       <Header />
       <main className="flex-1 flex flex-col pt-10 px-4 sm:px-6 lg:px-8">
         <div className="flex-1 flex items-center justify-center">
-          <HaikuDisplay />
+          <HaikuDisplay haiku={haiku} />
         </div>
       </main>
     </div>
-  );
-};
-
-export default Index;
+  )
+}
