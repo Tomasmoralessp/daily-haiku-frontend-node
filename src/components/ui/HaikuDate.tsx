@@ -1,9 +1,11 @@
-"use client"; // ¡Importante! Este componente necesita ser Cliente.
+"use client";
 
 import React, { useEffect, useState } from "react";
-import { Button } from "./button"; // Asume que './button' es la ruta correcta en tu proyecto Next
-import { Share2, Heart, Image as ImageIcon } from "lucide-react"; // Importa Image como ImageIcon para evitar conflictos
-import { cn } from "@/lib/utils"; // Asume que tienes una utilidad para combinar clases
+import { Button } from "./button";
+import { Share2, Heart, Image as ImageIcon } from "lucide-react";
+import { toast } from "sonner";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 // La interfaz Haiku se mantiene igual
 interface Haiku {
@@ -31,16 +33,16 @@ const HaikuImage: React.FC<{ src: string; alt: string; borderRadius?: string; cl
     <div
       className={cn(
         "relative w-full aspect-square overflow-hidden",
-        className, // Permite pasar clases adicionales
+        className,
         {
-          'rounded-2xl': borderRadius, // Aplica rounded-2xl si se proporciona borderRadius
+          'rounded-2xl': borderRadius,
         }
       )}
-      style={{ borderRadius }} // Estilo en línea para asegurar el radio de borde
+      style={{ borderRadius }}
     >
       {isLoaded ? null : (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-          <ImageIcon className="w-8 h-8 text-gray-400 dark:text-gray-500 animate-pulse" /> {/* Placeholder */}
+          <ImageIcon className="w-8 h-8 text-gray-400 dark:text-gray-500 animate-pulse" />
         </div>
       )}
       {error ? (
@@ -48,39 +50,30 @@ const HaikuImage: React.FC<{ src: string; alt: string; borderRadius?: string; cl
           <ImageIcon className="w-8 h-8 text-red-500 dark:text-red-400" />
         </div>
       ) : (
-        <img
+        <Image
           src={src}
           alt={alt}
-          className={cn(
-            "object-cover transition-opacity duration-300",
-            {
-              'opacity-0': !isLoaded,
-              'opacity-100': isLoaded,
-              'rounded-2xl': borderRadius, // Aplica la clase de redondeo
-            }
-          )}
+          fill
+          style={{ objectFit: 'cover', borderRadius }}
           onLoad={() => setIsLoaded(true)}
           onError={() => {
-            setIsLoaded(true); // Para evitar bucle infinito de error
+            setIsLoaded(true);
             setError(true);
-          }}
-          style={{ borderRadius }} // Pasamos el borderRadius como estilo
+        }}
+        
         />
       )}
     </div>
   );
 };
 
-
-const HaikuDisplay: React.FC<HaikuDateProps> = ({ date }) => {
+const HaikuDate: React.FC<HaikuDateProps> = ({ date }) => {
   const [data, setData] = useState<Haiku | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isHeartAnimating, setIsHeartAnimating] = useState(false);
 
   useEffect(() => {
-    // *** CAMBIO CLAVE: Acceso a variable de entorno ***
-    // Asegúrate de que NEXT_PUBLIC_API_URL esté definida en tu .env.local
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     if (!apiUrl) {
@@ -90,49 +83,50 @@ const HaikuDisplay: React.FC<HaikuDateProps> = ({ date }) => {
       return;
     }
 
-    fetch(`${apiUrl}/api/haiku/${date}`)
-      .then((response) => {
-        if (!response.ok) {
-          // Intenta obtener más detalles del error si es posible
-          return response.text().then(text => {
-            throw new Error(`Error al obtener el haiku: ${response.status} ${response.statusText} - ${text}`);
-          });
+    const fetchHaiku = async (dateString: string) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${apiUrl}/api/haiku/${dateString}`);
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`Error al obtener el haiku: ${response.status} ${response.statusText} - ${text}`);
+            }
+            const haikuData = await response.json();
+            setData(haikuData);
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error("Fetch error:", error);
+            setError(error.message);
+          } else {
+            console.error("Unknown fetch error:", error);
+            setError("Ocurrió un error desconocido al cargar el haiku.");
+          }
+        } finally {
+            setLoading(false);
         }
-        return response.json();
-      })
-      .then((data) => {
-        setData(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Fetch error:", error);
-        setError(error.message || "Ocurrió un error desconocido al cargar el haiku.");
-        setLoading(false);
-      });
+    }
+
+    fetchHaiku(date);
   }, [date]);
 
   const handleShare = () => {
-    const today = new Date().toISOString().split("T")[0];
-    // Asegúrate que esta URL base sea la correcta para tu app desplegada o local
-    const shareUrl = `${window.location.origin}/haiku/${today}`;
-    const message = `🌸 Check today's haiku (${today}) — timeless poetry from Bashō and beyond.`;
+    const shareUrl = `${window.location.origin}/haiku/${date}`;
+    const message = `🌸 Check the haiku for ${date} — timeless poetry from Bashō and beyond.`;
 
     if (navigator.share) {
       navigator
         .share({
-          title: "Daily Haiku",
+          title: `Haiku for ${date}`,
           text: message,
           url: shareUrl,
         })
         .catch((err) => {
-          // Evitar error si el usuario cancela el share
           if (err.name !== 'AbortError') {
             console.error("Error sharing:", err);
             toast.error("Error sharing the haiku.");
           }
         });
     } else if (navigator.clipboard) {
-      // Fallback a copiar al portapapeles si navigator.share no está disponible
       navigator.clipboard.writeText(`${message} ${shareUrl}`)
         .then(() => toast.success("Link copied to clipboard!"))
         .catch(err => {
@@ -140,22 +134,18 @@ const HaikuDisplay: React.FC<HaikuDateProps> = ({ date }) => {
           toast.error("Could not copy link to clipboard.");
         });
     } else {
-      // Si ninguna opción está disponible (muy raro)
       toast.error("Sharing is not supported on this browser.");
     }
   };
 
   const handleSupportClick = () => {
     setIsHeartAnimating(true);
-    setTimeout(() => setIsHeartAnimating(false), 1000); // Duración de la animación
-    // Abrir enlace en nueva pestaña
+    setTimeout(() => setIsHeartAnimating(false), 1000);
     window.open("https://buymeacoffee.com/tomasmorales", "_blank", "noopener,noreferrer");
   };
 
-  // --- Renderizado condicional (se mantiene igual) ---
   if (loading) {
     return (
-      // Considera usar un componente Skeleton Loader para mejor UX
       <div className="flex items-center justify-center min-h-[50vh]">
         <p className="text-gray-400 text-xl animate-pulse">Cargando haiku...</p>
       </div>
@@ -178,32 +168,25 @@ const HaikuDisplay: React.FC<HaikuDateProps> = ({ date }) => {
     );
   }
 
-  // --- Procesamiento de Keywords (se mantiene igual) ---
   let keywordsArray: string[] = [];
   if (typeof data.keywords === "string") {
     try {
-      // Intenta parsear, pero maneja el caso de que ya sea un array en formato string "[tag1, tag2]"
-      // o simplemente un string "tag1,tag2"
       const parsed = JSON.parse(data.keywords);
       if (Array.isArray(parsed)) {
         keywordsArray = parsed;
       }
     } catch (error) {
-      // Si falla el parseo JSON, quizás es una lista separada por comas
       keywordsArray = data.keywords.split(',').map(k => k.trim()).filter(k => k);
-      if (keywordsArray.length === 0 && data.keywords.trim()) { // Si split falla pero hay texto
-        keywordsArray = [data.keywords.trim()]; // Trátalo como una sola keyword
+      if (keywordsArray.length === 0 && data.keywords.trim()) {
+        keywordsArray = [data.keywords.trim()];
       }
       console.warn("Keywords no son un JSON array válido, intentando split por coma:", error);
     }
   } else if (Array.isArray(data.keywords)) {
     keywordsArray = data.keywords;
   }
-  // Filtrar posibles strings vacíos si vienen en el array
   keywordsArray = keywordsArray.filter(k => typeof k === 'string' && k.trim() !== '');
 
-
-  // --- JSX (se mantiene igual, asumiendo que las clases de Tailwind y componentes UI funcionan) ---
   return (
     <div className="w-full max-w-5xl mx-auto py-8">
       {/* Mobile layout */}
@@ -218,13 +201,10 @@ const HaikuDisplay: React.FC<HaikuDateProps> = ({ date }) => {
           />
         </div>
         <div className="text-center px-4">
-          {/* Usar dangerouslySetInnerHTML es arriesgado si 'haiku' viene de usuario */}
-          {/* Mejor asegurarse que el backend sanitiza o renderizar como texto */}
           <p className="text-2xl font-playfair leading-relaxed mb-4 whitespace-pre-line">{data.haiku}</p>
           <p className="text-lg uppercase font-inter">{data.author}</p>
           <p className="text-gray-400 uppercase text-sm mb-4">{data.season}</p>
 
-          {/* Keywords */}
           {keywordsArray.length > 0 && (
             <div className="flex flex-wrap justify-center gap-2 mb-4">
               {keywordsArray.map((keyword, index) => (
@@ -267,7 +247,7 @@ const HaikuDisplay: React.FC<HaikuDateProps> = ({ date }) => {
                   "mr-1 h-4 w-4 transition-transform duration-500",
                   isHeartAnimating ? "scale-150 text-red-500" : ""
                 )}
-                // aria-hidden="true" // Si el texto "Support" es suficiente
+                // aria-hidden="true"
               />
               Support
               {isHeartAnimating && (
@@ -359,5 +339,4 @@ const HaikuDisplay: React.FC<HaikuDateProps> = ({ date }) => {
   );
 };
 
-export default HaikuDisplay;
-
+export default HaikuDate;
