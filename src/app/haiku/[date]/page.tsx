@@ -1,17 +1,31 @@
-import { notFound } from 'next/navigation'
-import Header from '@/components/layout/Header'
-import HaikuDate from '@/components/ui/HaikuDate'
+import { notFound } from 'next/navigation';
+import Header from '@/components/layout/Header';
+import HaikuDate from '@/components/ui/HaikuDate';
+import { Haiku } from '@/lib/haiku';
+import { Metadata } from 'next';
 
-export default async function Page({ params }: { params: { date: string } }) {
-  const { date } = params
+type Props = {
+  params: { date: string };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { date } = params;
+  return {
+    title: `Haiku for ${date}`,
+    description: `Discover the haiku for ${date}`,
+  };
+}
+
+export default async function Page({ params }: Props) {
+  const { date } = params;
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/haiku/${date}`, {
     next: { revalidate: 60 },
-  })
+  });
 
-  if (!res.ok) notFound()
+  if (!res.ok) notFound();
 
-  const haiku = await res.json()
+  const haiku: Haiku = await res.json();
 
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">
@@ -22,5 +36,5 @@ export default async function Page({ params }: { params: { date: string } }) {
         </div>
       </main>
     </div>
-  )
+  );
 }
