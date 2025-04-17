@@ -2,19 +2,18 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import HaikuDate from '@/components/ui/HaikuDate';
 import { Haiku } from '@/lib/haiku';
-import { NextPage } from 'next';
 
 interface PageProps {
-  params: { date: string };
+  params: Promise<{ date: string }>;
 }
-// Comment to trigger redeploy
 
-const Page: NextPage<PageProps> = async ({ params }) => {
-  const { date } = params;
+export default async function Page(props: PageProps) {
+  const { date } = await props.params;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/haiku/${date}`, {
-    next: { revalidate: 60 },
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/haiku/${date}`,
+    { next: { revalidate: 60 } }
+  );
 
   if (!res.ok) notFound();
 
@@ -30,6 +29,4 @@ const Page: NextPage<PageProps> = async ({ params }) => {
       </main>
     </div>
   );
-};
-
-export default Page;
+}
