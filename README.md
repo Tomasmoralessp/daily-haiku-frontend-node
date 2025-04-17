@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌸 DailyHaiku – Frontend UI
 
-## Getting Started
+**DailyHaiku** is a minimalist web interface that displays a new haiku every day, integrating frontend design with backend content automation. The project was built to explore how to deliver micro-content elegantly and efficiently, using modern frontend tools and clean UX practices.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🎯 Purpose
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The goal of this project was to build a frontend experience that feels lightweight, poetic, and fluid — while integrating seamlessly with a dynamic backend. The focus was on speed, clarity, and simplicity, delivering one core piece of content: a haiku per day.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
-## Learn More
+| Layer               | Technologies                                     |
+| ------------------- | ------------------------------------------------ |
+| **Framework**       | React (Vite)                                     |
+| **Styling**         | TailwindCSS + ShadCN UI Components               |
+| **Architecture**    | Single Page Application (SPA)                    |
+| **API Integration** | FastAPI backend serving haikus via JSON endpoint |
+| **Deployment**      | Vercel with automatic deploys                    |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 💡 Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Fully responsive layout designed for both mobile and desktop
+- Clean typography and whitespace for a meditative reading experience
+- Dynamic fetch of daily content via external API
+- Stateless rendering with visual hierarchy and subtle animations
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📚 What I Practiced
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Utility-first CSS design with Tailwind
+- UI composition and reusable component design with ShadCN
+- Asynchronous data fetching and state management in React
+- Integration with backend APIs using clean, decoupled logic
+- Fast, frictionless deployment with Vercel and version control
+
+---
+
+## 🔭 What's Next
+
+This project helped refine my frontend stack and gave me a clean integration pipeline. I'm now focusing on:
+
+- **Holden Analytics**: A full-stack machine learning product focused on churn prediction, model explainability (SHAP), and business insights.
+- Expanding backend capabilities in FastAPI
+- Building scalable ML pipelines and full data-driven applications
