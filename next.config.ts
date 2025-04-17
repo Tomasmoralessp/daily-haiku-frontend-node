@@ -2,7 +2,6 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  swcMinify: false, // Desactivamos esto para evitar problemas
   images: {
     remotePatterns: [
       {
@@ -14,8 +13,8 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    optimizeCss: false, // Desactivamos la optimización CSS que usa LightningCSS
-    disablePostcssPresetEnv: true, // Deshabilitamos el preset de PostCSS que puede causar conflictos
+    optimizeCss: false,
+    disablePostcssPresetEnv: true,
   },
 };
 
