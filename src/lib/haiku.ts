@@ -12,10 +12,9 @@ export interface Haiku {
 }
 
 export async function getHaikuData(date: string): Promise<Haiku> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const response = await fetch(`${apiUrl}/api/haiku/${date}`);
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/haiku/${date}`);
   if (!response.ok) {
-      throw new Error(`Failed to fetch haiku: ${response.status} ${response.statusText}`);
+    throw new Error(`Failed to fetch haiku: ${response.status} ${response.statusText}`);
   }
   return response.json();
 }

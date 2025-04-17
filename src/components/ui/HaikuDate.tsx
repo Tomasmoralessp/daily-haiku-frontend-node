@@ -6,19 +6,8 @@ import { Share2, Heart, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Haiku } from "@/lib/haiku";
 
-interface Haiku {
-  id: number;
-  haiku: string;
-  author: string;
-  season: string;
-  title?: string | null;
-  notes?: string | null;
-  source?: string;
-  keywords?: string | string[] | null;
-  image_url: string;
-  date: string;
-}
 
 interface HaikuDateProps {
   date: string;
