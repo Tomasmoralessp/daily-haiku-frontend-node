@@ -12,10 +12,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    optimizeCss: false,
-    disablePostcssPresetEnv: true,
-  },
 };
 
 export default nextConfig;
