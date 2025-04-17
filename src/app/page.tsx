@@ -1,6 +1,7 @@
 import Header from "../components/layout/Header";
 import HaikuDisplay from "../components/ui/HaikuDisplay";
 import { Metadata } from 'next';
+import SubscribeForm from "@/components/ui/SubscribeForm";
 
 interface Haiku {
   id: number;
@@ -61,10 +62,9 @@ export default async function Index() {
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">
       <Header />
-      <main className="flex-1 flex flex-col pt-10 px-4 sm:px-6 lg:px-8">
-        <div className="flex-1 flex items-center justify-center">
-          <HaikuDisplay haiku={haiku} />
-        </div>
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+        <HaikuDisplay haiku={haiku} />
+        <SubscribeForm />
       </main>
     </div>
   );

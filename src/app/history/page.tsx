@@ -16,6 +16,7 @@ interface HaikuItem {
   haiku: string;
   author: string;
   season: string;
+  id: number;  
 }
 
 interface ApiResponse {
@@ -101,7 +102,7 @@ export default function HistoryPage() {
         <ul className="space-y-4">
           {haikus.map(item => (
             <li
-              key={item.date}
+              key={item.id}
               className="border border-white/10 rounded-lg p-4 sm:p-5 hover:bg-white/5 transition"
             >
               <Link href={`/haiku/${item.date}`} className="block space-y-1">
