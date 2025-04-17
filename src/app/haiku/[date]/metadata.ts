@@ -1,24 +1,23 @@
-// src/app/haiku/[date]/metadata.ts
-import { Metadata } from 'next'
+import { Metadata } from 'next';
 
 type Props = {
-  params: { date: string }
-}
+  params: { date: string };
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { date } = params
+  const { date } = params;
 
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/haiku/${date}`, {
       next: { revalidate: 60 },
-    })
+    });
 
-    if (!res.ok) throw new Error('No se pudo obtener el haiku')
+    if (!res.ok) throw new Error('No se pudo obtener el haiku');
 
-    const haiku = await res.json()
+    const haiku = await res.json();
     const imageUrl = haiku?.image_url?.startsWith('http')
       ? haiku.image_url
-      : 'https://dailyhaiku.vercel.app/banner/banner.png'
+      : 'https://dailyhaiku.vercel.app/banner/banner.png';
 
     return {
       title: haiku?.title || `Haiku for ${date} | Daily Haiku`,
@@ -43,12 +42,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: haiku?.haiku || '',
         images: [imageUrl],
       },
-    }
+    };
   } catch (err) {
-    console.error('Metadata generation failed:', err)
+    console.error('Metadata generation failed:', err);
     return {
       title: `${date} | Daily Haiku`,
       description: `Haiku publicado el ${date}.`,
-    }
+    };
   }
 }

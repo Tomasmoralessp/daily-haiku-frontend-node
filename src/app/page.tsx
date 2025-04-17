@@ -1,29 +1,32 @@
-import Header from "../components/layout/Header"
-import HaikuDisplay from "../components/ui/HaikuDisplay"
-import { Metadata } from 'next'
+import Header from "../components/layout/Header";
+import HaikuDisplay from "../components/ui/HaikuDisplay";
+import { Metadata } from 'next';
 
 interface Haiku {
-  id: number
-  haiku: string
-  author: string
-  season: string
-  title?: string | null
-  notes?: string | null
-  source?: string
-  keywords?: string | string[] | null
-  image_url: string
-  date: string
+  id: number;
+  haiku: string;
+  author: string;
+  season: string;
+  title?: string | null;
+  notes?: string | null;
+  source?: string;
+  keywords?: string | string[] | null;
+  image_url: string;
+  date: string;
+}
+
+async function getDailyHaiku(): Promise<Haiku | null> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/daily_haiku`, {
+    cache: 'force-cache',
+  });
+  return res.ok ? await res.json() : null;
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/daily_haiku`, {
-    cache: 'force-cache',
-  })
-
-  const haiku = await res.ok ? await res.json() : null
-  const date = haiku?.date || new Date().toISOString().split('T')[0]
-  const fallbackImage = 'https://dailyhaiku.vercel.app/banner/banner.png'
-  const imageUrl = haiku?.image_url?.startsWith('http') ? haiku.image_url : fallbackImage
+  const haiku = await getDailyHaiku();
+  const date = haiku?.date || new Date().toISOString().split('T')[0];
+  const fallbackImage = 'https://dailyhaiku.vercel.app/banner/banner.png';
+  const imageUrl = haiku?.image_url?.startsWith('http') ? haiku.image_url : fallbackImage;
 
   return {
     title: `Haiku for ${date} | Daily Haiku`,
@@ -41,23 +44,19 @@ export async function generateMetadata(): Promise<Metadata> {
       description: haiku?.haiku || '',
       images: [imageUrl],
     },
-  }
+  };
 }
 
 export default async function Index() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/daily_haiku`, {
-    cache: 'force-cache',
-  })
+  const haiku = await getDailyHaiku();
 
-  if (!res.ok) {
+  if (!haiku) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white bg-black">
-          <p className="text-xl">Error loading today&apos;s haiku</p>
+        <p className="text-xl">Error loading today&apos;s haiku</p>
       </div>
-    )
+    );
   }
-
-  const haiku: Haiku = await res.json()
 
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">
@@ -68,5 +67,5 @@ export default async function Index() {
         </div>
       </main>
     </div>
-  )
+  );
 }
