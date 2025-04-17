@@ -7,7 +7,7 @@ import { NextPage } from 'next';
 interface PageProps {
   params: { date: string };
 }
-// Comment to trigger deploy
+// Comment to trigger redeploy
 
 const Page: NextPage<PageProps> = async ({ params }) => {
   const { date } = params;
