@@ -2,28 +2,14 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import HaikuDate from '@/components/ui/HaikuDate';
 import { Haiku } from '@/lib/haiku';
-import { Metadata, NextPage } from 'next';
-
-interface PageParams {
-  date: string;
-}
+import { NextPage } from 'next';
 
 interface PageProps {
-  params: Promise<PageParams>; // params es ahora una Promise
-}
-
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const resolvedParams = await params; // Resuelve la Promise
-  const { date } = resolvedParams;
-  return {
-    title: `Haiku for ${date}`,
-    description: `Discover the haiku for ${date}`,
-  };
+  params: { date: string };
 }
 
 const Page: NextPage<PageProps> = async ({ params }) => {
-  const resolvedParams = await params; // Resuelve la Promise
-  const { date } = resolvedParams;
+  const { date } = params;
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/haiku/${date}`, {
     next: { revalidate: 60 },
