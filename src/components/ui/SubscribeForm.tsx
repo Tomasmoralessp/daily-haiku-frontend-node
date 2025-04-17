@@ -7,11 +7,11 @@ const SubscribeForm = () => {
         Receive one haiku per day in your inbox. No noise, just poetry.
       </p>
       <form
-        action="https://buttondown.email/api/emails/embed-subscribe/trabajostomaslh"
+        action="https://buttondown.email/api/emails/embed-subscribe/dailyhaiku"
         method="post"
         target="popupwindow"
         onSubmit={() =>
-          window.open("https://buttondown.email/trabajostomaslh", "popupwindow")
+          window.open("https://buttondown.email/dailyhaiku", "popupwindow")
         }
         className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 w-full"
       >
