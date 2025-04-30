@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const imageUrl = haiku?.image_url?.startsWith('http') ? haiku.image_url : fallbackImage;
 
   return {
-    title: `Haiku for ${date} | Daily Haiku`,
+    title: `Daily Haiku`,
     description: haiku?.haiku?.slice(0, 140) || 'Discover timeless poetry every day.',
     openGraph: {
       title: `Haiku for ${date}`,
