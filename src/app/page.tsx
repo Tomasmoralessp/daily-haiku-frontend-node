@@ -17,8 +17,8 @@ interface Haiku {
 }
 
 async function getDailyHaiku(): Promise<Haiku | null> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/daily_haiku`, {
-    cache: 'force-cache',
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/haiku/today`, {
+    cache: 'no-store',
   });
   return res.ok ? await res.json() : null;
 }
