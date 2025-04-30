@@ -1,50 +1,56 @@
-# 🌸 DailyHaiku – Frontend UI
+# DailyHaiku — A Daily Poetry Experience
 
-**DailyHaiku** is a minimalist web interface that displays a new haiku every day, integrating frontend design with backend content automation. The project was built to explore how to deliver micro-content elegantly and efficiently, using modern frontend tools and clean UX practices.
-
----
-
-## 🎯 Purpose
-
-The goal of this project was to build a frontend experience that feels lightweight, poetic, and fluid — while integrating seamlessly with a dynamic backend. The focus was on speed, clarity, and simplicity, delivering one core piece of content: a haiku per day.
+**DailyHaiku** is a minimalist web application that delivers one curated haiku each day. Designed for clarity and rhythm, the project blends modern frontend architecture with a clean API backend to showcase micro-content beautifully and automatically.
 
 ---
 
-## 🛠️ Tech Stack
+## Purpose
 
-| Layer               | Technologies                                     |
-| ------------------- | ------------------------------------------------ |
-| **Framework**       | React (Vite)                                     |
-| **Styling**         | TailwindCSS + ShadCN UI Components               |
-| **Architecture**    | Single Page Application (SPA)                    |
-| **API Integration** | FastAPI backend serving haikus via JSON endpoint |
-| **Deployment**      | Vercel with automatic deploys                    |
+The goal was to create a frontend experience that feels poetic yet functional — one that invites reflection with zero friction. Behind the scenes, content is generated and assigned daily through an automated pipeline, decoupled from the UI.
 
 ---
 
-## 💡 Key Features
+## Architecture Overview
 
-- Fully responsive layout designed for both mobile and desktop
-- Clean typography and whitespace for a meditative reading experience
-- Dynamic fetch of daily content via external API
-- Stateless rendering with visual hierarchy and subtle animations
-
----
-
-## 📚 What I Practiced
-
-- Utility-first CSS design with Tailwind
-- UI composition and reusable component design with ShadCN
-- Asynchronous data fetching and state management in React
-- Integration with backend APIs using clean, decoupled logic
-- Fast, frictionless deployment with Vercel and version control
+| Layer       | Technologies                                   |
+| ----------- | ---------------------------------------------- |
+| Frontend    | React (Vite), TailwindCSS, ShadCN UI           |
+| Backend API | FastAPI (Python)                               |
+| Database    | Supabase (PostgreSQL + Storage)                |
+| Scheduling  | Cron-job.org + Buttondown API for daily emails |
+| Deployment  | Vercel (frontend) + Railway (backend)          |
 
 ---
 
-## 🔭 What's Next
+## Core Features
 
-This project helped refine my frontend stack and gave me a clean integration pipeline. I'm now focusing on:
+- One haiku delivered every 24h, fully automated
+- Responsive, fluid interface for mobile and desktop
+- Stateless UI with clean data fetching from API
+- OG/Twitter metadata for SEO and sharing
+- Image + text pairing with mood-matching artwork
+- Minimal, silent email subscription (no spam, just poetry)
 
-- **Holden Analytics**: A full-stack machine learning product focused on churn prediction, model explainability (SHAP), and business insights.
-- Expanding backend capabilities in FastAPI
-- Building scalable ML pipelines and full data-driven applications
+---
+
+## What I Practiced
+
+- Component design with ShadCN and TailwindCSS
+- API-first UI thinking and clean integration patterns
+- Decoupling frontend from backend state management
+- Serverless deployment workflows (Vercel, Railway)
+- Accessibility-first, distraction-free layouting
+
+---
+
+## What’s Next
+
+- Building data pipelines and backend logic for generative and ML-based applications
+- Exploring RAG systems and structured retrieval in production-like settings
+- Strengthening SQL, distributed architectures, and cloud-native tooling
+
+---
+
+## Live Demo
+
+https://dailyhaiku.vercel.app
