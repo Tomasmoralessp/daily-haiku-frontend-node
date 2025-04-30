@@ -1,21 +1,24 @@
 import React from "react";
-import Link from "next/link"; // Importa Link de Next.js
-// Ya no importamos useState, usePathname, useIsMobile, Menu, X, etc.
+import Link from "next/link";
+import Image from "next/image";
 
 const Header: React.FC = () => {
-  // No necesitamos estado ni lógica de hooks aquí
-
   return (
     <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-5 flex justify-between items-center backdrop-blur-lg bg-black/70 border-b border-white/5">
-      {/* Logo Link */}
-      <Link href="/" className="font-playfair text-xl tracking-wider text-white">
-        DailyHaiku 🌸
+      {/* Logo con texto */}
+      <Link href="/" className="flex items-center space-x-2">
+      <span className="font-playfair text-xl tracking-wider text-white">
+          DailyHaiku
+        </span>
+        <Image
+          src="/favicon.ico" 
+          alt="Logo Daily Haiku"
+          width={32}
+          height={32}
+        />
       </Link>
 
       {/* Navegación Principal */}
-      {/* Nota: Sin los hooks, no hay lógica integrada aquí para un menú móvil tipo "hamburguesa" */}
-      {/* o para resaltar el enlace activo. Esto tendría que manejarse de otra forma si es necesario */}
-      {/* (p. ej., CSS puro para responsive, o pasar props si el estado se maneja más arriba). */}
       <nav className="flex items-center space-x-5">
         <Link
           href="/history"
@@ -30,9 +33,6 @@ const Header: React.FC = () => {
           About the project
         </Link>
       </nav>
-
-      {/* Ya no hay botón de menú móvil aquí porque quitamos el estado */}
-
     </header>
   );
 };

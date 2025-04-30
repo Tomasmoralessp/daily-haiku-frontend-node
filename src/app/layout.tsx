@@ -1,12 +1,12 @@
-import "./globals.css";
-import { Metadata } from 'next';
+import './globals.css'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: {
-    template: '%s | Daily Haiku',
-    default: 'Daily Haiku',
-  },
+  title: 'Daily Haiku 🌸',
   description: 'Descubre un haiku diario, poesía atemporal de Bashō y más allá.',
+  icons: {
+    icon: '/favicon.ico', // Cambia si decides mantener el nombre original
+  },
   metadataBase: new URL('https://dailyhaiku.vercel.app'),
   openGraph: {
     title: 'Daily Haiku 🌸',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description: 'Descubre un haiku diario, poesía atemporal de Bashō y más allá.',
     images: ['https://dailyhaiku.vercel.app/banner/banner.png'],
   },
-};
+}
 
 export default function RootLayout({
   children,
