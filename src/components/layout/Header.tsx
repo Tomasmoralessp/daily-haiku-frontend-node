@@ -13,8 +13,8 @@ const Header: React.FC = () => {
         <Image
           src="/favicon.ico" 
           alt="Logo Daily Haiku"
-          width={32}
-          height={32}
+          width={24}
+          height={24}
         />
       </Link>
 
